@@ -3,33 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student CRUD App</title>
+  <title>Student Details Platform</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Student CRUD Application</h2>
+  <div class="container">
+    <h2>Student Details Platform</h2>
+    <p class="info">Add student details using Thunder Client and view them here.</p>
 
-  <div class="form">
-    <input type="text" id="name" placeholder="Name">
-    <input type="email" id="email" placeholder="Email">
-    <input type="number" id="age" placeholder="Age">
-    <button onclick="addStudent()">Add Student</button>
+    <div class="actions">
+      <button id="refreshBtn">Refresh Students</button>
+    </div>
+
+    <h3>Students List</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Age</th>
+        </tr>
+      </thead>
+      <tbody id="studentTable"></tbody>
+    </table>
+
+    <p id="message" class="message"></p>
   </div>
-
-  <h3>Students List</h3>
-
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Age</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="studentTable"></tbody>
-  </table>
 
   <script src="app.js"></script>
 </body>

@@ -1,72 +1,38 @@
 const API_URL = "/api/students";
+const table = document.getElementById("studentTable");
+const message = document.getElementById("message");
+const refreshBtn = document.getElementById("refreshBtn");
 
 async function fetchStudents() {
-  const response = await fetch(API_URL);
-  const students = await response.json();
-  const table = document.getElementById("studentTable");
+  try {
+    const response = await fetch(API_URL);
+    const students = await response.json();
 
-  table.innerHTML = "";
+    table.innerHTML = "";
 
-  students.forEach((student) => {
-    table.innerHTML += `
-      <tr>
-        <td>${student.id}</td>
-        <td>${student.name}</td>
-        <td>${student.email}</td>
-        <td>${student.age}</td>
-        <td>
-          <button class="edit" onclick="editStudent('${student.id}')">Edit</button>
-          <button class="delete" onclick="deleteStudent('${student.id}')">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
-}
+    if (!students.length) {
+      message.textContent = "No student details available right now.";
+      return;
+    }
 
-async function addStudent() {
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const age = document.getElementById("age").value.trim();
+    message.textContent = "";
 
-  if (!name || !email || !age) {
-    alert("All fields are required");
-    return;
+    students.forEach((student) => {
+      table.innerHTML += `
+        <tr>
+          <td>${student.id}</td>
+          <td>${student.name}</td>
+          <td>${student.email}</td>
+          <td>${student.age}</td>
+        </tr>
+      `;
+    });
+  } catch (error) {
+    table.innerHTML = "";
+    message.textContent = "Unable to load student details.";
   }
-
-  await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, age })
-  });
-
-  document.getElementById("name").value = "";
-  document.getElementById("email").value = "";
-  document.getElementById("age").value = "";
-
-  fetchStudents();
 }
 
-async function deleteStudent(id) {
-  await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  fetchStudents();
-}
-
-async function editStudent(id) {
-  const name = prompt("Enter new name");
-  const email = prompt("Enter new email");
-  const age = prompt("Enter new age");
-
-  if (!name || !email || !age) {
-    return;
-  }
-
-  await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, age })
-  });
-
-  fetchStudents();
-}
+refreshBtn.addEventListener("click", fetchStudents);
 
 fetchStudents();
