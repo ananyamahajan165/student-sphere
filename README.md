@@ -1,29 +1,30 @@
 # Student Details Platform
 
-This is a simple Node.js and Express.js project that stores student details in a JSON file using the File System module.
+A simple student details platform built with Node.js, Express.js, the File System module, and plain frontend files.
+
+Student records are stored in a local JSON file, and the frontend displays student data in a simple table. New student records can be added, updated, or deleted using Thunder Client.
 
 ## Features
 
-- Add student details using Thunder Client
-- View all student details in the browser
-- Get single student by ID
-- Update student by ID
-- Delete student by ID
-- Data is stored in `data/students.json`
+- Store student records in `students.json`
+- Perform CRUD operations using REST APIs
+- View student details on a simple frontend page
+- Test APIs easily with Thunder Client
+- Uses only Express, FS module, HTML, CSS, and JavaScript
 
-## Tech Used
+## Tech Stack
 
 - Node.js
 - Express.js
-- FS module
+- File System (`fs`) module
 - HTML
 - CSS
 - JavaScript
 
-## Folder Structure
+## Project Structure
 
 ```text
-project/
+student-sphere/
 ├── public/
 │   ├── index.html
 │   ├── style.css
@@ -43,20 +44,25 @@ project/
 └── README.md
 ```
 
-## Install and Run
+## Installation
 
 ```bash
 npm install
+```
+
+## Run the Project
+
+```bash
 npm start
 ```
 
-Server runs on:
+Server URL:
 
 ```text
 http://localhost:3000
 ```
 
-Frontend page:
+Frontend URL:
 
 ```text
 http://localhost:3000/index.html
@@ -64,24 +70,26 @@ http://localhost:3000/index.html
 
 ## API Endpoints
 
-### Get all students
+### 1. Get all students
 
 ```http
 GET /api/students
 ```
 
-### Get student by ID
+### 2. Get student by ID
 
 ```http
 GET /api/students/:id
 ```
 
-### Add student
+### 3. Add a student
 
 ```http
 POST /api/students
 Content-Type: application/json
 ```
+
+Example body:
 
 ```json
 {
@@ -91,12 +99,14 @@ Content-Type: application/json
 }
 ```
 
-### Update student
+### 4. Update a student
 
 ```http
 PUT /api/students/:id
 Content-Type: application/json
 ```
+
+Example body:
 
 ```json
 {
@@ -106,25 +116,24 @@ Content-Type: application/json
 }
 ```
 
-### Delete student
+### 5. Delete a student
 
 ```http
 DELETE /api/students/:id
 ```
 
-## Thunder Client Testing
+## Thunder Client Usage
 
-Use Thunder Client in VS Code to test the APIs.
-
-1. Start the server using `npm start`
-2. Open Thunder Client
+1. Run the server using `npm start`
+2. Open Thunder Client in VS Code
 3. Create a `POST` request to `http://localhost:3000/api/students`
-4. Add JSON body and send request
-5. Open `http://localhost:3000/index.html` in the browser
-6. Click `Refresh Students` to see updated data
+4. Send student data in JSON format
+5. Open `http://localhost:3000/index.html`
+6. Click `Refresh Students` to view the latest student details
 
-## Notes
+## Important Notes
 
-- Student data is stored in `data/students.json`
-- Frontend only displays student details
-- Add, update, and delete operations can be done using Thunder Client
+- Data is stored in `data/students.json`
+- The frontend is only for viewing student details
+- CRUD operations can be tested using Thunder Client
+- This project is suitable for college assignments and practical exams
