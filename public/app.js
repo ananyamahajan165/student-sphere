@@ -1,38 +1,30 @@
-const API_URL = "/api/students";
-const table = document.getElementById("studentTable");
-const message = document.getElementById("message");
-const refreshBtn = document.getElementById("refreshBtn");
+const API = "http://localhost:5000/api/students";
 
-async function fetchStudents() {
-  try {
-    const response = await fetch(API_URL);
-    const students = await response.json();
+async function addStudent() {
+  const name = document.getElementById("name").value;
+  const marks = document.getElementById("marks").value;
 
-    table.innerHTML = "";
+  await fetch(API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, marks })
+  });
 
-    if (!students.length) {
-      message.textContent = "No student details available right now.";
-      return;
-    }
-
-    message.textContent = "";
-
-    students.forEach((student) => {
-      table.innerHTML += `
-        <tr>
-          <td>${student.id}</td>
-          <td>${student.name}</td>
-          <td>${student.email}</td>
-          <td>${student.age}</td>
-        </tr>
-      `;
-    });
-  } catch (error) {
-    table.innerHTML = "";
-    message.textContent = "Unable to load student details.";
-  }
+  alert("Student added");
 }
 
-refreshBtn.addEventListener("click", fetchStudents);
+async function getRanking() {
+  const res = await fetch(API + "/rank");
+  const data = await res.json();
 
-fetchStudents();
+  const list = document.getElementById("list");
+  list.innerHTML = "";
+
+  data.forEach((s) => {
+    const li = document.createElement("li");
+    li.innerText = `${s.rank}. ${s.name} - ${s.marks}`;
+    list.appendChild(li);
+  });
+}
