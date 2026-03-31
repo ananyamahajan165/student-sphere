@@ -1,37 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Details Platform</title>
+  <title>Student Ranking</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Student Details Platform</h2>
-    <p class="info">Add student details using Thunder Client and view them here.</p>
 
-    <div class="actions">
-      <button id="refreshBtn">Refresh Students</button>
-    </div>
+<h1>Student Management System</h1>
 
-    <h3>Students List</h3>
+<input type="text" id="name" placeholder="Name">
+<input type="number" id="marks" placeholder="Marks">
+<button onclick="addStudent()">Add Student</button>
 
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Age</th>
-        </tr>
-      </thead>
-      <tbody id="studentTable"></tbody>
-    </table>
+<button onclick="getRanking()">Show Ranking</button>
 
-    <p id="message" class="message"></p>
-  </div>
+<ul id="list"></ul>
 
-  <script src="app.js"></script>
+<script src="app.js"></script>
+
 </body>
 </html>
