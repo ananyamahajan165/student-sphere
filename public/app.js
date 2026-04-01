@@ -1,30 +1,16 @@
-const API = "http://localhost:5000/api/students";
+const express = require("express");
+const cors = require("cors");
+const studentRoutes = require("./routes/studentRoutes");
 
-async function addStudent() {
-  const name = document.getElementById("name").value;
-  const marks = document.getElementById("marks").value;
+const app = express();
 
-  await fetch(API, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ name, marks })
-  });
+app.use(cors());
+app.use(express.json());
 
-  alert("Student added");
-}
+// serve frontend
+app.use(express.static("public"));
 
-async function getRanking() {
-  const res = await fetch(API + "/rank");
-  const data = await res.json();
+// routes
+app.use("/api/students", studentRoutes);
 
-  const list = document.getElementById("list");
-  list.innerHTML = "";
-
-  data.forEach((s) => {
-    const li = document.createElement("li");
-    li.innerText = `${s.rank}. ${s.name} - ${s.marks}`;
-    list.appendChild(li);
-  });
-}
+module.exports = app;
