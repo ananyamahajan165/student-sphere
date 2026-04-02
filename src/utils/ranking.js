@@ -7,7 +7,6 @@ function getGrade(marks) {
 }
 
 function calculateRank(students) {
-  // sort descending
   students.sort(function (a, b) {
     return b.marks - a.marks;
   });
