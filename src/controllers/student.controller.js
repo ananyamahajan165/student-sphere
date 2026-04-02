@@ -43,28 +43,23 @@ exports.getStudentById = (req, res) => {
 };
 
 exports.updateStudent = (req, res) => {
-  const { name, email, age } = req.body;
-  const students = readData();
-  const index = students.findIndex((item) => item.id === req.params.id);
+  const students = JSON.parse(fs.readFileSync(filePath));
 
-  if (index === -1) {
-    return res.status(404).json({ message: "Student not found" });
+  const id = parseInt(req.params.id);
+
+  for (let i = 0; i < students.length; i++) {
+    if (students[i].id === id) {
+      students[i].name = req.body.name || students[i].name;
+      students[i].marks = req.body.marks || students[i].marks;
+    }
   }
 
-  if (!isValidStudent({ name, email, age })) {
-    return res.status(400).json({ message: "Name, email and age are required" });
-  }
+  fs.writeFileSync(filePath, JSON.stringify(students, null, 2));
 
-  students[index] = {
-    ...students[index],
-    name,
-    email,
-    age: Number(age)
-  };
-
-  writeData(students);
-  res.json(students[index]);
+  res.json({ message: "Student updated" });
 };
+
+
 
 exports.deleteStudent = (req, res) => {
   const students = readData();
