@@ -62,13 +62,13 @@ exports.updateStudent = (req, res) => {
 
 
 exports.deleteStudent = (req, res) => {
-  const students = readData();
-  const filteredStudents = students.filter((item) => item.id !== req.params.id);
+  let students = JSON.parse(fs.readFileSync(filePath));
 
-  if (filteredStudents.length === students.length) {
-    return res.status(404).json({ message: "Student not found" });
-  }
+  const id = parseInt(req.params.id);
 
-  writeData(filteredStudents);
-  res.json({ message: "Student deleted successfully" });
+  students = students.filter((s) => s.id !== id);
+
+  fs.writeFileSync(filePath, JSON.stringify(students, null, 2));
+
+  res.json({ message: "Student deleted" });
 };
