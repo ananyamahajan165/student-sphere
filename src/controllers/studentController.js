@@ -43,6 +43,8 @@ res.json(students);
 
 // ---------------- GET ALL ----------------
 exports.getStudents = (req, res) => {
+  console.log("GET STUDENTS HIT");   // 👈 ADD THIS
+
   const students = readData();
   res.json(students);
 };
