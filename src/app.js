@@ -11,3 +11,7 @@ app.use(express.json());
 app.use("/api/students", studentRoutes);
 
 module.exports = app; 
+
+app.get("/test", (req, res) => {
+  res.send("WORKING");
+});
