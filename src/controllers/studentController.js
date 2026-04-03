@@ -24,7 +24,8 @@ exports.createStudent = (req, res) => {
       .json({ message: "Name, email, age and marks are required" });
   }
 
-  const students = readData();
+const students = readData();
+res.json(students);
 
   const newStudent = {
     id: crypto.randomUUID(),

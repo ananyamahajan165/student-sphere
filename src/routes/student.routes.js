@@ -13,6 +13,7 @@ const {
 
 router.post("/", createStudent);
 router.get("/", getStudents);
+router.get("/", getStudents);
 router.get("/rank", getRankings);
 router.get("/topper", getTopper);
 router.get("/:id", getStudentById);
