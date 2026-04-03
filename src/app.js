@@ -15,3 +15,7 @@ module.exports = app;
 app.get("/test", (req, res) => {
   res.send("WORKING");
 });
+
+app.get("/", (req, res) => {
+  res.send("Server is working");
+});
