@@ -24,3 +24,32 @@ Express.js
 JavaScript
 JSON (File-based storage)
 Nodemon
+
+
+📁 Folder Structure
+project/
+│
+├── public/
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+│
+├── data/
+│   └── students.json
+│
+├── src/
+│   ├── controllers/
+│   │   └── studentController.js
+│   │
+│   ├── routes/
+│   │   └── student.routes.js
+│   │
+│   ├── utils/
+│   │   ├── file.util.js
+│   │   └── ranking.js
+│   │
+│   └── app.js
+│
+├── server.js
+├── package.json
+└── README.md
