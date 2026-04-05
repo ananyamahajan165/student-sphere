@@ -17,5 +17,5 @@ app.get("/test", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Server is working");
+  res.send("SERVER WORKING");
 });
