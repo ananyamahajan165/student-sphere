@@ -7,21 +7,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// routes
-app.use("/api/students", studentRoutes);
-
-module.exports = app; 
-
-app.get("/test", (req, res) => {
-  res.send("WORKING");
-});
-
+// test route
 app.get("/", (req, res) => {
   res.send("SERVER WORKING");
 });
 
-app.get("/api/students", (req, res) => {
-  res.send("API WORKING");
-});
+// API routes
+app.use("/api/students", studentRoutes);
 
-require("./routes/studentRoutes")
+module.exports = app;
