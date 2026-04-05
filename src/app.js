@@ -20,4 +20,8 @@ app.get("/", (req, res) => {
   res.send("SERVER WORKING");
 });
 
+app.get("/api/students", (req, res) => {
+  res.send("API WORKING");
+});
+
 require("./routes/studentRoutes")
