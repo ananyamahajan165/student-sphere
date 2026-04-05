@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const studentRoutes = require("./routes/student.routes");
+const studentRoutes = require("./routes/studentRoutes");
 
 const app = express();
 
@@ -19,3 +19,5 @@ app.get("/test", (req, res) => {
 app.get("/", (req, res) => {
   res.send("SERVER WORKING");
 });
+
+require("./routes/studentRoutes")
