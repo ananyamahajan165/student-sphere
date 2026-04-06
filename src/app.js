@@ -16,3 +16,5 @@ app.get("/", (req, res) => {
 app.use("/api/students", studentRoutes);
 
 module.exports = app;
+
+app.use(express.static("public"));
