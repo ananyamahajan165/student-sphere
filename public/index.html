@@ -1,22 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Student Ranking</title>
+  <title>Student Sphere</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1>Student Management System</h1>
+  <h1>🎓 Student Sphere</h1>
 
-<input type="text" id="name" placeholder="Name">
-<input type="number" id="marks" placeholder="Marks">
-<button onclick="addStudent()">Add Student</button>
+  <!-- Add Student -->
+  <div class="form">
+    <input type="text" id="name" placeholder="Name">
+    <input type="email" id="email" placeholder="Email">
+    <input type="number" id="age" placeholder="Age">
+    <input type="number" id="marks" placeholder="Marks">
+    <button onclick="addStudent()">Add Student</button>
+  </div>
 
-<button onclick="getRanking()">Show Ranking</button>
+  <!-- Buttons -->
+  <div class="buttons">
+    <button onclick="getStudents()">Show Students</button>
+    <button onclick="getRanking()">Show Ranking</button>
+    <button onclick="getTopper()">Show Topper</button>
+  </div>
 
-<ul id="list"></ul>
+  <!-- Output -->
+  <div id="output"></div>
 
-<script src="app.js"></script>
+  <script src="app.js"></script>
 
 </body>
 </html>
