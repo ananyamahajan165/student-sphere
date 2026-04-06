@@ -6,15 +6,12 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public")); // 👈 IMPORTANT
 
-// test route
 app.get("/", (req, res) => {
   res.send("SERVER WORKING");
 });
 
-// API routes
 app.use("/api/students", studentRoutes);
 
 module.exports = app;
-
-app.use(express.static("public"));
