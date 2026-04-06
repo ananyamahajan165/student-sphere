@@ -1,16 +1,61 @@
-const express = require("express");
-const cors = require("cors");
-const studentRoutes = require("./routes/studentRoutes");
+const API = "http://localhost:5001/api/students";
 
-const app = express();
+// Add student
+async function addStudent() {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const age = document.getElementById("age").value;
+  const marks = document.getElementById("marks").value;
 
-app.use(cors());
-app.use(express.json());
+  await fetch(API, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ name, email, age, marks })
+  });
 
-// serve frontend
-app.use(express.static("public"));
+  alert("Student Added!");
+}
 
-// routes
-app.use("/api/students", studentRoutes);
+// Get all students
+async function getStudents() {
+  const res = await fetch(API);
+  const data = await res.json();
 
-module.exports = app;
+  display(data);
+}
+
+// Get ranking
+async function getRanking() {
+  const res = await fetch(API + "/rank");
+  const data = await res.json();
+
+  display(data);
+}
+
+// Get topper
+async function getTopper() {
+  const res = await fetch(API + "/topper");
+  const data = await res.json();
+
+  display([data]);
+}
+
+// Display function
+function display(data) {
+  const output = document.getElementById("output");
+  output.innerHTML = "";
+
+  data.forEach((s) => {
+    const div = document.createElement("div");
+    div.innerHTML = `
+      <p>
+        <b>${s.name}</b> | ${s.email} | Age: ${s.age} | Marks: ${s.marks}
+        ${s.rank ? "| Rank: " + s.rank : ""}
+        ${s.grade ? "| Grade: " + s.grade : ""}
+      </p>
+    `;
+    output.appendChild(div);
+  });
+}
