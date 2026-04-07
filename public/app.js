@@ -59,3 +59,26 @@ function display(data) {
     output.appendChild(div);
   });
 }
+
+function loginUser() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+    })
+    .then(res => res.json())
+    .then(user => {
+
+        if(user.role === "student") {
+            window.location.href = "/student-dashboard.html";
+        } else {
+            window.location.href = "/teacher-dashboard.html";
+        }
+
+    });
+}
