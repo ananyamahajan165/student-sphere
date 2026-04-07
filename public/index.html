@@ -4,30 +4,57 @@
   <title>Student Sphere</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body onload="setupDashboard()">
 
-  <h1>🎓 Student Sphere</h1>
-
-  <!-- Add Student -->
-  <div class="form">
-    <input type="text" id="name" placeholder="Name">
-    <input type="email" id="email" placeholder="Email">
-    <input type="number" id="age" placeholder="Age">
-    <input type="number" id="marks" placeholder="Marks">
-    <button onclick="addStudent()">Add Student</button>
+  <!-- 🔹 Navbar -->
+  <div class="navbar">
+    <h2>🎓 Student Sphere</h2>
+    <div>
+      <span id="userInfo"></span>
+      <button onclick="logout()">Logout</button>
+    </div>
   </div>
 
-  <!-- Buttons -->
-  <div class="buttons">
-    <button onclick="getStudents()">Show Students</button>
-    <button onclick="getRanking()">Show Ranking</button>
-    <button onclick="getTopper()">Show Topper</button>
-  </div>
+  <!-- 🔹 Main Layout -->
+  <div class="container">
 
-  <!-- Output -->
-  <div id="output"></div>
+    <!-- 🔹 Sidebar -->
+    <div class="sidebar">
+      <button onclick="getStudents()">📊 Students</button>
+      <button onclick="getTopper()">🏆 Topper</button>
+      <button id="rankBtn" onclick="getRanking()">🥇 Ranking</button>
+    </div>
+
+    <!-- 🔹 Content Area -->
+    <div class="main">
+
+      <!-- Add Student (Teacher Only) -->
+      <div class="card" id="addStudentSection">
+        <h3>Add Student</h3>
+        <input type="text" id="name" placeholder="Name">
+        <input type="email" id="email" placeholder="Email">
+        <input type="number" id="age" placeholder="Age">
+        <input type="number" id="marks" placeholder="Marks">
+        <button onclick="addStudent()">Add Student</button>
+      </div>
+
+      <!-- Output Section -->
+      <div id="output"></div>
+
+    </div>
+
+  </div>
 
   <script src="app.js"></script>
+
+  <script>
+    // Hide Add Student for students
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user && user.role === "student") {
+      const addSection = document.getElementById("addStudentSection");
+      if (addSection) addSection.style.display = "none";
+    }
+  </script>
 
 </body>
 </html>

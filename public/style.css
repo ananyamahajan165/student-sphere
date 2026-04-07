@@ -1,37 +1,140 @@
+/* ===== GLOBAL ===== */
 body {
-  font-family: Arial;
-  text-align: center;
-  background: #f5f5f5;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f9fafb;
+  color: #111827;
 }
 
-h1 {
-  color: #333;
-}
-
-.form input {
-  padding: 8px;
-  margin: 5px;
-}
-
-button {
-  padding: 8px 12px;
-  margin: 5px;
-  cursor: pointer;
-  border: none;
-  background: #4CAF50;
+/* ===== NAVBAR ===== */
+.navbar {
+  background: #4F46E5;
   color: white;
-  border-radius: 5px;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-button:hover {
-  background: #45a049;
+.navbar h2 {
+  margin: 0;
 }
 
-#output {
-  margin-top: 20px;
+.navbar button {
+  background: #ef4444;
+}
+
+.navbar button:hover {
+  background: #dc2626;
+}
+
+/* ===== LAYOUT ===== */
+.container {
+  display: flex;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: #111827;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.sidebar button {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 10px;
+  border: none;
+  background: #1f2937;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.sidebar button:hover {
+  background: #374151;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main {
+  flex: 1;
+  padding: 20px;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: white;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.3s;
 }
 
 .card:hover {
-  transform: scale(1.03);
+  transform: scale(1.02);
+}
+
+/* ===== FORM INPUTS ===== */
+input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+input:focus {
+  outline: none;
+  border-color: #4F46E5;
+}
+
+/* ===== BUTTONS ===== */
+button {
+  padding: 10px 14px;
+  border: none;
+  background: #4F46E5;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
   transition: 0.3s;
+}
+
+button:hover {
+  background: #4338CA;
+}
+
+/* ===== OUTPUT CARDS ===== */
+#output .card {
+  margin-top: 10px;
+}
+
+/* ===== TEXT ===== */
+h3 {
+  margin-top: 0;
+}
+
+/* ===== RESPONSIVE (IMPORTANT) ===== */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .sidebar button {
+    flex: 1;
+    margin-right: 5px;
+  }
 }
