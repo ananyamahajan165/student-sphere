@@ -12,5 +12,12 @@
     "email": "arjun@gmail.com",
     "age": 20,
     "marks": 98
+  },
+  {
+    "id": "df3e78e1-29a0-4d2b-a4ed-5369c62b1276",
+    "name": "Akshit",
+    "email": "akshit@gmail.com",
+    "age": 14,
+    "marks": 75
   }
 ]
