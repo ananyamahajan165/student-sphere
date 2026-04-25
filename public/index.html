@@ -6,55 +6,37 @@
 </head>
 <body onload="setupDashboard()">
 
-  <!-- 🔹 Navbar -->
-  <div class="navbar">
-    <h2>🎓 Student Sphere</h2>
-    <div>
-      <span id="userInfo"></span>
-      <button onclick="logout()">Logout</button>
+
+  <!-- Modern Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-logo">🎓</div>
+      <h1>Welcome to Student Sphere</h1>
+      <p class="hero-desc">A modern platform for teachers and students to manage, track, and celebrate academic progress. View students, check rankings, and more—all in one place.</p>
+      <a href="login.html" class="cta-btn">Get Started</a>
     </div>
-  </div>
+  </section>
 
-  <!-- 🔹 Main Layout -->
-  <div class="container">
-
-    <!-- 🔹 Sidebar -->
-    <div class="sidebar">
-      <button onclick="getStudents()">📊 Students</button>
-      <button onclick="getTopper()">🏆 Topper</button>
-      <button id="rankBtn" onclick="getRanking()">🥇 Ranking</button>
+  <!-- Features Section -->
+  <section class="features">
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <h3>Student Management</h3>
+      <p>Easily add, view, and manage student records with a clean interface.</p>
     </div>
-
-    <!-- 🔹 Content Area -->
-    <div class="main">
-
-      <!-- Add Student (Teacher Only) -->
-      <div class="card" id="addStudentSection">
-        <h3>Add Student</h3>
-        <input type="text" id="name" placeholder="Name">
-        <input type="email" id="email" placeholder="Email">
-        <input type="number" id="age" placeholder="Age">
-        <input type="number" id="marks" placeholder="Marks">
-        <button onclick="addStudent()">Add Student</button>
-      </div>
-
-      <!-- Output Section -->
-      <div id="output"></div>
-
+    <div class="feature-card">
+      <span class="feature-icon">🏆</span>
+      <h3>Topper Insights</h3>
+      <p>Highlight and celebrate top-performing students in your class.</p>
     </div>
+    <div class="feature-card">
+      <span class="feature-icon">🥇</span>
+      <h3>Ranking System</h3>
+      <p>Visualize student rankings and foster healthy academic competition.</p>
+    </div>
+  </section>
 
-  </div>
 
-  <script src="app.js"></script>
-
-  <script>
-    // Hide Add Student for students
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user.role === "student") {
-      const addSection = document.getElementById("addStudentSection");
-      if (addSection) addSection.style.display = "none";
-    }
-  </script>
 
 </body>
 </html>
