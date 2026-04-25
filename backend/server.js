@@ -9,6 +9,10 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB connected"))
 .catch(err => console.log(err));
 
+
+const studentRoutes = require('./routes/studentRoutes');
+app.use('/api/students', studentRoutes);
+
 app.get("/", (req, res) => {
     res.send("Backend running");
 });
