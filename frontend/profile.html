@@ -1,1 +1,45 @@
-<!-- Profile page for Student Sphere -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Profile | Student Sphere</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav class="navbar">
+		<div class="logo">🎓 Student Sphere</div>
+		<ul class="nav-links">
+			<li><a href="dashboard.html">Dashboard</a></li>
+			<li><a href="profile.html">Profile</a></li>
+			<li><a href="#" onclick="logout()">Logout</a></li>
+		</ul>
+	</nav>
+
+	<main class="profile-main">
+		<section class="profile-header">
+			<h1>Your Profile</h1>
+		</section>
+		<section class="profile-card card">
+			<p><b>Name:</b> <span id="profileName">User</span></p>
+			<p><b>Email:</b> <span id="profileEmail"></span></p>
+			<p><b>Age:</b> <span id="profileAge"></span></p>
+			<p><b>Role:</b> <span id="profileRole"></span></p>
+			<button class="edit-btn">Edit Profile</button>
+		</section>
+	</main>
+
+	<script src="app.js"></script>
+	<script>
+		// Example: Populate profile info from localStorage (adjust as needed)
+		const user = JSON.parse(localStorage.getItem('user'));
+		if (user) {
+			document.getElementById('profileName').textContent = user.name;
+			document.getElementById('profileEmail').textContent = user.email;
+			document.getElementById('profileAge').textContent = user.age;
+			document.getElementById('profileRole').textContent = user.role;
+		}
+	</script>
+</body>
+</html>

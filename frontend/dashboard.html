@@ -1,1 +1,55 @@
-<!-- Dashboard page for Student Sphere -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dashboard | Student Sphere</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<nav class="navbar">
+		<div class="logo">🎓 Student Sphere</div>
+		<ul class="nav-links">
+			<li><a href="dashboard.html">Dashboard</a></li>
+			<li><a href="profile.html">Profile</a></li>
+			<li><a href="#" onclick="logout()">Logout</a></li>
+		</ul>
+	</nav>
+
+	<main class="dashboard-main">
+		<section class="dashboard-header">
+			<h1>Welcome, <span id="userName">User</span>!</h1>
+			<p class="dashboard-desc">Here you can view your academic progress, rankings, and more.</p>
+		</section>
+
+		<section class="dashboard-cards">
+			<div class="card" id="studentInfo">
+				<h2>Your Info</h2>
+				<p>Email: <span id="userEmail"></span></p>
+				<p>Age: <span id="userAge"></span></p>
+				<p>Marks: <span id="userMarks"></span></p>
+				<p>Role: <span id="userRole"></span></p>
+			</div>
+			<div class="card" id="rankingInfo">
+				<h2>Ranking</h2>
+				<p>Your Rank: <span id="userRank">-</span></p>
+			</div>
+		</section>
+	</main>
+
+	<script src="app.js"></script>
+	<script>
+		// Example: Populate user info from localStorage (adjust as needed)
+		const user = JSON.parse(localStorage.getItem('user'));
+		if (user) {
+			document.getElementById('userName').textContent = user.name;
+			document.getElementById('userEmail').textContent = user.email;
+			document.getElementById('userAge').textContent = user.age;
+			document.getElementById('userMarks').textContent = user.marks;
+			document.getElementById('userRole').textContent = user.role;
+		}
+		// TODO: Fetch and display actual rank from backend
+	</script>
+</body>
+</html>
