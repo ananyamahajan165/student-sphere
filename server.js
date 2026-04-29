@@ -1,11 +1,9 @@
 // Server setup
 const app = require('./src/app');
 const { connectDatabase } = require('./src/config/db');
-const mongoose = require('mongoose');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 5000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/student_sphere';
 
 connectDatabase()
   .then(() => {
