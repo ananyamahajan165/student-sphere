@@ -2,54 +2,43 @@
 
 📌 Project Overview
 
-Student Sphere is a backend-based Student Management System built using Node.js and Express.js.
-It allows users to perform CRUD operations on student data and provides a ranking system based on marks.
+Student Sphere is a React + Node.js full-stack application for managing students, attendance, and leaderboards.
+The backend uses Express and MongoDB, while the frontend is built with React and Vite.
 
 
 🚀 Features
-➕ Add new student
-📋 View all students
-🔍 Get student by ID
-✏️ Update student details
-❌ Delete student
-🏆 Rank students based on marks
-🎯 Grade system (A+, A, B, C, F)
-🥇 Get topper
+➕ Signup and login with JWT authentication
+📋 Add, view, update, and delete students
+🏆 Student ranking and performance dashboard
+📝 Circular notices and attendance overview
 
 
 
 🛠️ Tech Stack
 Node.js
 Express.js
-JavaScript
-JSON (File-based storage)
-Nodemon
+React
+Vite
+MongoDB
+JSON Web Tokens
 
 
 📁 Folder Structure
-project/
+student_sphere/
 │
-├── public/
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-│
-├── data/
-│   └── students.json
-│
-├── src/
-│   ├── controllers/
-│   │   └── studentController.js
-│   │
-│   ├── routes/
-│   │   └── student.routes.js
-│   │
-│   ├── utils/
-│   │   ├── file.util.js
-│   │   └── ranking.js
-│   │
-│   └── app.js
-│
-├── server.js
-├── package.json
+├── client/                # React frontend source
+├── src/                   # Express backend source
+├── uploads/               # Uploaded profile images and files
+├── server.js              # Backend entrypoint
+├── package.json           # Root backend scripts
 └── README.md
+
+
+## Run locally
+1. Install backend dependencies: `npm install`
+2. Install frontend dependencies: `cd client && npm install`
+3. Build the React frontend: `cd client && npm run build`
+4. Start the backend server: `npm start`
+
+
+Open the app at `http://localhost:5001`.
