@@ -4,8 +4,6 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/student_sp
 
 function connectDatabase() {
   return mongoose.connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
   });
 }
 

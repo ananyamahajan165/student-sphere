@@ -28,6 +28,7 @@ function calculateAverageMarks(marks = []) {
 
 function buildStudentResponse(student, marks = [], attendanceRecord = null) {
   return {
+    _id: student._id,
     id: student._id,
     name: student.name,
     enrollmentNumber: student.enrollmentNumber,
