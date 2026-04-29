@@ -1,13 +1,5 @@
 const mongoose = require('mongoose');
 
-const subjectSchema = new mongoose.Schema(
-  {
-    marks: { type: Number, required: true, min: 0, max: 100 },
-    attendance: { type: Number, required: true, min: 0, max: 100 },
-  },
-  { _id: false }
-);
-
 const studentSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true, sparse: true },
   mentorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },

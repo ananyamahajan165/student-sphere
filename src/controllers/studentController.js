@@ -96,10 +96,12 @@ exports.getCurrentStudent = async (req, res) => {
     if (req.user.role !== 'student') {
       return res.status(403).json({ message: 'Only students can access this endpoint' });
     }
+
     const student = await Student.findOne({ user: req.user.userId }).lean();
     if (!student) {
       return res.status(404).json({ message: 'Student record not found' });
     }
+
     const marks = await Mark.find({ studentId: student._id }).lean();
     const attendanceRecord = await Attendance.findOne({ studentId: student._id }).lean();
     res.json(buildStudentResponse(student, marks, attendanceRecord));
