@@ -13,7 +13,7 @@ function createCaseInsensitiveEmailQuery(email) {
 
 exports.signup = async (req, res) => {
   try {
-  const { name, email, password, role, profile = {} } = req.body;
+    const { name, email, password, role, profile = {} } = req.body;
     const normalizedEmail = normalizeEmail(email);
 
     if (!name || !normalizedEmail || !password) {
@@ -54,7 +54,16 @@ exports.signup = async (req, res) => {
       await student.save();
     }
     const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
-    return res.status(201).json({ token, user: { name: user.name, email: user.email, role: user.role, profile: user.profile, profileImage: user.profileImage } });
+    return res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profile: user.profile,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
@@ -73,8 +82,17 @@ exports.login = async (req, res) => {
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
-  const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
-  res.json({ token, user: { name: user.name, email: user.email, role: user.role, profile: user.profile, profileImage: user.profileImage } });
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profile: user.profile,
+      },
+    });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

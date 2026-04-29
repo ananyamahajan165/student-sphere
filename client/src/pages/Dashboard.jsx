@@ -23,6 +23,8 @@ export default function Dashboard() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || 'null');
 
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
   const [students, setStudents] = useState([]);
   const [ownStudent, setOwnStudent] = useState(null);
   const [circulars, setCirculars] = useState([]);
@@ -42,6 +44,11 @@ export default function Dashboard() {
   });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    document.body.classList.toggle('dark-theme', theme === 'dark');
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     if (!token) {
@@ -145,6 +152,10 @@ export default function Dashboard() {
     setSelectedStudentId('');
     setMarkForm({ studentId: '', subject: SUBJECT_KEYS[0].key, marksObtained: '', maxMarks: '' });
     setAttendanceForm({ studentId: '', totalClasses: '', attendedClasses: '' });
+  };
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   async function handleSaveMarks(event) {
@@ -275,6 +286,126 @@ export default function Dashboard() {
       </form>
   );
 
+  const renderActionPanel = () => {
+    if (!modalType || user?.role !== 'mentor') return null;
+
+    const title = modalType === 'addStudent'
+      ? 'Add student'
+      : modalType === 'marks'
+      ? 'Add marks'
+      : 'Add attendance';
+
+    return (
+      <div className="action-panel">
+        {modalType === 'addStudent' ? (
+          <div className="form-panel">
+            <div className="panel-header">
+              <h3>{title}</h3>
+              <button type="button" className="ghost" onClick={closeModal}>Close</button>
+            </div>
+            {renderAddStudentForm()}
+          </div>
+        ) : (
+          <div className="form-panel">
+            <div className="panel-header">
+              <h3>{title}</h3>
+              <button type="button" className="ghost" onClick={closeModal}>Close</button>
+            </div>
+            {modalType === 'marks' && (
+              <form onSubmit={handleSaveMarks} className="student-form">
+                <div className="form-row">
+                  <label>Select student</label>
+                  <select
+                    value={markForm.studentId || selectedStudentId}
+                    onChange={(event) => setMarkForm((prev) => ({ ...prev, studentId: event.target.value }))}
+                    required
+                  >
+                    <option value="">Choose a student</option>
+                    {students.map((student) => (
+                      <option key={student._id} value={student._id}>{student.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-row">
+                  <label>Subject</label>
+                  <select
+                    value={markForm.subject}
+                    onChange={(event) => setMarkForm((prev) => ({ ...prev, subject: event.target.value }))}
+                    required
+                  >
+                    {SUBJECT_KEYS.map((subject) => (
+                      <option key={subject.key} value={subject.key}>{subject.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-row">
+                  <label>Marks obtained</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={markForm.marksObtained}
+                    onChange={(event) => setMarkForm((prev) => ({ ...prev, marksObtained: event.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="form-row">
+                  <label>Max marks</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={markForm.maxMarks}
+                    onChange={(event) => setMarkForm((prev) => ({ ...prev, maxMarks: event.target.value }))}
+                    required
+                  />
+                </div>
+                <button type="submit" className="primary">Save marks</button>
+              </form>
+            )}
+            {modalType === 'attendance' && (
+              <form onSubmit={handleSaveAttendance} className="student-form">
+                <div className="form-row">
+                  <label>Select student</label>
+                  <select
+                    value={attendanceForm.studentId || selectedStudentId}
+                    onChange={(event) => setAttendanceForm((prev) => ({ ...prev, studentId: event.target.value }))}
+                    required
+                  >
+                    <option value="">Choose a student</option>
+                    {students.map((student) => (
+                      <option key={student._id} value={student._id}>{student.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="form-row">
+                  <label>Total classes</label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={attendanceForm.totalClasses}
+                    onChange={(event) => setAttendanceForm((prev) => ({ ...prev, totalClasses: event.target.value }))}
+                    required
+                  />
+                </div>
+                <div className="form-row">
+                  <label>Attended classes</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={attendanceForm.attendedClasses}
+                    onChange={(event) => setAttendanceForm((prev) => ({ ...prev, attendedClasses: event.target.value }))}
+                    required
+                  />
+                </div>
+                <button type="submit" className="primary">Save attendance</button>
+              </form>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderStudentTable = () => (
     <div className="students-panel">
       <div className="panel-header">
@@ -319,7 +450,6 @@ export default function Dashboard() {
       </div>
     </div>
   );
-      {user?.role === 'mentor' && renderModal()}
   const renderProfile = () => {
     if (user?.role === 'mentor') {
       return (
@@ -359,117 +489,6 @@ export default function Dashboard() {
     );
   };
 
-  const renderModal = () => {
-    if (!modalType) return null;
-
-    const title = modalType === 'addStudent'
-      ? 'Add student'
-      : modalType === 'marks'
-      ? 'Add marks'
-      : 'Add attendance';
-
-    return (
-      <div className="form-panel action-panel">
-        <div className="panel-header">
-          <div>
-            <h3>{title}</h3>
-            <p className="subtle">Complete the information below to continue.</p>
-          </div>
-          <button type="button" className="ghost" onClick={closeModal}>Close</button>
-        </div>
-        {modalType === 'addStudent' && renderAddStudentForm()}
-        {modalType === 'marks' && (
-          <form onSubmit={handleSaveMarks} className="student-form">
-            <div className="form-row">
-              <label>Select student</label>
-              <select
-                value={markForm.studentId || selectedStudentId}
-                onChange={(event) => setMarkForm((prev) => ({ ...prev, studentId: event.target.value }))}
-                required
-              >
-                <option value="">Choose a student</option>
-                {students.map((student) => (
-                  <option key={student._id} value={student._id}>{student.name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-row">
-              <label>Subject</label>
-              <select
-                value={markForm.subject}
-                onChange={(event) => setMarkForm((prev) => ({ ...prev, subject: event.target.value }))}
-                required
-              >
-                {SUBJECT_KEYS.map((subject) => (
-                  <option key={subject.key} value={subject.key}>{subject.label}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-row">
-              <label>Marks obtained</label>
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={markForm.marksObtained}
-                onChange={(event) => setMarkForm((prev) => ({ ...prev, marksObtained: event.target.value }))}
-                required
-              />
-            </div>
-            <div className="form-row">
-              <label>Max marks</label>
-              <input
-                type="number"
-                min="1"
-                value={markForm.maxMarks}
-                onChange={(event) => setMarkForm((prev) => ({ ...prev, maxMarks: event.target.value }))}
-                required
-              />
-            </div>
-            <button type="submit" className="primary">Save marks</button>
-          </form>
-        )}
-        {modalType === 'attendance' && (
-          <form onSubmit={handleSaveAttendance} className="student-form">
-            <div className="form-row">
-              <label>Select student</label>
-              <select
-                value={attendanceForm.studentId || selectedStudentId}
-                onChange={(event) => setAttendanceForm((prev) => ({ ...prev, studentId: event.target.value }))}
-                required
-              >
-                <option value="">Choose a student</option>
-                {students.map((student) => (
-                  <option key={student._id} value={student._id}>{student.name}</option>
-                ))}
-              </select>
-            </div>
-            <div className="form-row">
-              <label>Total classes</label>
-              <input
-                type="number"
-                min="1"
-                value={attendanceForm.totalClasses}
-                onChange={(event) => setAttendanceForm((prev) => ({ ...prev, totalClasses: event.target.value }))}
-                required
-              />
-            </div>
-            <div className="form-row">
-              <label>Attended classes</label>
-              <input
-                type="number"
-                min="0"
-                value={attendanceForm.attendedClasses}
-                onChange={(event) => setAttendanceForm((prev) => ({ ...prev, attendedClasses: event.target.value }))}
-                required
-              />
-            </div>
-            <button type="submit" className="primary">Save attendance</button>
-          </form>
-        )}
-      </div>
-    );
-  };
 
   const renderStudentSubjects = (student) => (
     <div className="subjects-grid">
@@ -531,6 +550,45 @@ export default function Dashboard() {
           </div>
         </div>
         {renderStudentSubjects(ownStudent)}
+        <div className="student-progress-grid">
+          <div className="student-progress-card">
+            <h4>Attendance record</h4>
+            {ownStudent.attendance ? (
+              <div>
+                <div className="detail-row"><span>Total classes</span><strong>{ownStudent.attendance.totalClasses || '0'}</strong></div>
+                <div className="detail-row"><span>Attended</span><strong>{ownStudent.attendance.attendedClasses || '0'}</strong></div>
+                <div className="detail-row"><span>Attendance %</span><strong>{ownStudent.attendance.percentage != null ? `${ownStudent.attendance.percentage}%` : '0%'}</strong></div>
+              </div>
+            ) : (
+              <p>No attendance has been uploaded yet.</p>
+            )}
+          </div>
+          <div className="student-progress-card">
+            <h4>Marks summary</h4>
+            {ownStudent.marks?.length ? (
+              <table className="student-record-table">
+                <thead>
+                  <tr>
+                    <th>Subject</th>
+                    <th>Score</th>
+                    <th>Percentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ownStudent.marks.map((mark) => (
+                    <tr key={mark.subject}>
+                      <td>{SUBJECT_KEYS.find((sub) => sub.key === mark.subject)?.label || mark.subject}</td>
+                      <td>{mark.marksObtained}/{mark.maxMarks}</td>
+                      <td>{mark.percentage != null ? `${mark.percentage}%` : '—'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No marks have been uploaded yet.</p>
+            )}
+          </div>
+        </div>
       </div>
     );
   };
@@ -576,6 +634,9 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="topbar-right">
+          <button type="button" className="ghost theme-toggle" onClick={toggleTheme}>
+            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          </button>
           <button className="ghost" onClick={handleLogout}>Logout</button>
         </div>
       </div>
@@ -605,15 +666,15 @@ export default function Dashboard() {
         <div className="main-column">
           {user?.role === 'mentor' && (
             <div className="mentor-toolbar">
-              <button className="primary" onClick={() => openModal('addStudent')}>Add student</button>
-              <button className="primary" onClick={() => openModal('marks')}>Add marks</button>
-              <button className="primary" onClick={() => openModal('attendance')}>Add attendance</button>
+              <button className={modalType === 'addStudent' ? 'primary active-tab' : 'primary'} onClick={() => openModal('addStudent')}>Add student</button>
+              <button className={modalType === 'marks' ? 'primary active-tab' : 'primary'} onClick={() => openModal('marks')}>Add marks</button>
+              <button className={modalType === 'attendance' ? 'primary active-tab' : 'primary'} onClick={() => openModal('attendance')}>Add attendance</button>
             </div>
           )}
-          {user?.role === 'mentor' && renderModal()}
-          {isLoading ? <div className="loading-message">Loading dashboard...</div> : renderTimeline()}
+          {user?.role === 'mentor' && renderActionPanel()}
           {user?.role === 'mentor' && renderStudentTable()}
           {user?.role !== 'mentor' && renderStudentDashboard()}
+          {isLoading ? <div className="loading-message">Loading dashboard...</div> : renderTimeline()}
           {error && <div className="error-banner">{error}</div>}
         </div>
 
