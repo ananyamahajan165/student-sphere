@@ -66,7 +66,7 @@ exports.addStudent = async (req, res) => {
       return res.status(403).json({ message: 'Only mentors can add students' });
     }
 
-    const { name, email, enrollmentNumber, department, semester, year, phone } = req.body;
+    const { name, enrollmentNumber, department, semester, year, phone } = req.body;
     if (!name || !enrollmentNumber || !department || !semester || !year || !phone) {
       return res.status(400).json({ message: 'All student fields are required' });
     }
@@ -77,7 +77,6 @@ exports.addStudent = async (req, res) => {
     }
 
     const student = new Student({
-      email: email ? String(email).trim().toLowerCase() : undefined,
       name: name.trim(),
       enrollmentNumber: enrollmentNumber.trim(),
       department: department.trim(),
@@ -98,13 +97,8 @@ exports.getCurrentStudent = async (req, res) => {
     if (req.user.role !== 'student') {
       return res.status(403).json({ message: 'Only students can access this endpoint' });
     }
-    let student = await Student.findOne({ user: req.user.userId }).lean();
-    if (!student && req.user.email) {
-      student = await Student.findOne({ email: req.user.email }).lean();
-    }
-    if (!student && req.user.studentId) {
-      student = await Student.findById(req.user.studentId).lean();
-    }
+
+    const student = await Student.findOne({ user: req.user.userId }).lean();
     if (!student) {
       return res.status(404).json({ message: 'Student record not found' });
     }

@@ -5,7 +5,6 @@ const attendanceController = require('../controllers/attendanceController');
 
 router.post('/', auth, attendanceController.addAttendance);
 router.get('/', auth, attendanceController.getAttendance);
-router.get('/student/:studentId', auth, attendanceController.getAttendanceByStudent);
 router.get('/:studentId', auth, attendanceController.getAttendanceByStudent);
 router.put('/:id', auth, attendanceController.updateAttendance);
 router.delete('/:id', auth, attendanceController.deleteAttendance);

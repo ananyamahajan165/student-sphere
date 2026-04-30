@@ -43,7 +43,6 @@ exports.signup = async (req, res) => {
     if (role === 'student') {
       const student = new Student({
         user: user._id,
-        email: normalizedEmail,
         mentorId: null,
         name,
         enrollmentNumber: String(profile.enrollmentNumber || ''),
@@ -54,11 +53,7 @@ exports.signup = async (req, res) => {
       });
       await student.save();
     }
-    const token = jwt.sign(
-      { userId: user._id, role: user.role, email: user.email, studentId },
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '1d' }
-    );
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
     return res.status(201).json({
       token,
       user: {
@@ -67,7 +62,6 @@ exports.signup = async (req, res) => {
         email: user.email,
         role: user.role,
         profile: user.profile,
-        studentId,
       },
     });
   } catch (err) {
@@ -88,16 +82,7 @@ exports.login = async (req, res) => {
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
-    const token = jwt.sign(
-      { userId: user._id, role: user.role, email: user.email, studentId },
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '1d' }
-    );
-    let studentId = null;
-    if (user.role === 'student') {
-      const student = await Student.findOne({ user: user._id });
-      studentId = student?._id || null;
-    }
+    const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET || 'secret', { expiresIn: '1d' });
     res.json({
       token,
       user: {
@@ -106,7 +91,6 @@ exports.login = async (req, res) => {
         email: user.email,
         role: user.role,
         profile: user.profile,
-        studentId,
       },
     });
   } catch (err) {

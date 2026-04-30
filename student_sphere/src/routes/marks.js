@@ -5,7 +5,6 @@ const markController = require('../controllers/markController');
 
 router.post('/', auth, markController.addMark);
 router.get('/', auth, markController.getMarks);
-router.get('/student/:studentId', auth, markController.getMarksByStudent);
 router.get('/:studentId', auth, markController.getMarksByStudent);
 router.put('/:id', auth, markController.updateMark);
 router.delete('/:id', auth, markController.deleteMark);

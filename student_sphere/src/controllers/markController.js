@@ -1,16 +1,5 @@
 const Student = require('../models/Student');
 const Mark = require('../models/Mark');
-const mongoose = require('mongoose');
-
-async function resolveStudentReference({ studentId, enrollmentNumber }) {
-  if (studentId && mongoose.Types.ObjectId.isValid(studentId)) {
-    return Student.findById(studentId);
-  }
-  if (enrollmentNumber) {
-    return Student.findOne({ enrollmentNumber: String(enrollmentNumber).trim() });
-  }
-  return null;
-}
 
 exports.addMark = async (req, res) => {
   try {
@@ -18,17 +7,14 @@ exports.addMark = async (req, res) => {
       return res.status(403).json({ message: 'Only mentors can add marks' });
     }
 
-    const { studentId, enrollmentNumber, subject, marksObtained, maxMarks } = req.body;
-    if ((!studentId && !enrollmentNumber) || !subject || marksObtained === undefined || maxMarks === undefined) {
-      return res.status(400).json({ message: 'studentId or enrollmentNumber, subject, marksObtained, and maxMarks are required' });
+    const { studentId, subject, marksObtained, maxMarks } = req.body;
+    if (!studentId || !subject || marksObtained === undefined || maxMarks === undefined) {
+      return res.status(400).json({ message: 'studentId, subject, marksObtained, and maxMarks are required' });
     }
 
-    const student = await resolveStudentReference({ studentId, enrollmentNumber });
+    const student = await Student.findById(studentId);
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
-    }
-    if (student.mentorId && student.mentorId.toString() !== req.user.userId) {
-      return res.status(403).json({ message: 'Access denied' });
     }
 
     const parsedMarks = Number(marksObtained);
@@ -39,7 +25,7 @@ exports.addMark = async (req, res) => {
 
     const percentage = Math.round((parsedMarks / parsedMax) * 100);
     const mark = await Mark.findOneAndUpdate(
-      { studentId: student._id, subject },
+      { studentId, subject },
       { marksObtained: parsedMarks, maxMarks: parsedMax, percentage },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
@@ -81,7 +67,7 @@ exports.getMarksByStudent = async (req, res) => {
     }
     const student = await Student.findById(studentId);
     if (!student) return res.status(404).json({ message: 'Student not found' });
-    if (req.user.role === 'mentor' && (!student.mentorId || student.mentorId.toString() !== req.user.userId)) {
+    if (req.user.role === 'mentor' && student.mentorId.toString() !== req.user.userId) {
       return res.status(403).json({ message: 'Access denied' });
     }
     const marks = await Mark.find({ studentId }).lean();
@@ -104,7 +90,7 @@ exports.updateMark = async (req, res) => {
     const mark = await Mark.findById(id);
     if (!mark) return res.status(404).json({ message: 'Mark not found' });
     const student = await Student.findById(mark.studentId);
-    if (!student || !student.mentorId || student.mentorId.toString() !== req.user.userId) {
+    if (!student || student.mentorId.toString() !== req.user.userId) {
       return res.status(403).json({ message: 'Access denied' });
     }
     const parsedMarks = Number(marksObtained);
@@ -131,7 +117,7 @@ exports.deleteMark = async (req, res) => {
     const mark = await Mark.findById(id);
     if (!mark) return res.status(404).json({ message: 'Mark not found' });
     const student = await Student.findById(mark.studentId);
-    if (!student || !student.mentorId || student.mentorId.toString() !== req.user.userId) {
+    if (!student || student.mentorId.toString() !== req.user.userId) {
       return res.status(403).json({ message: 'Access denied' });
     }
     await mark.deleteOne();
