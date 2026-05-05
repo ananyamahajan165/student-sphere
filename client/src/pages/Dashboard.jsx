@@ -23,16 +23,6 @@ export default function Dashboard() {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || 'null');
 
-  function parseJwt(tokenValue) {
-    try {
-      const [, payload] = tokenValue.split('.');
-      const decoded = JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
-      return decoded;
-    } catch (err) {
-      return null;
-    }
-  }
-
   const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
 
   const [students, setStudents] = useState([]);
@@ -78,42 +68,22 @@ export default function Dashboard() {
 
   async function fetchStudents() {
     try {
-      if (user?.role === 'mentor') {
-        const res = await fetch('/api/students', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!res.ok) {
-          if (res.status === 401) {
-            localStorage.clear();
-            navigate('/login');
-          }
-          return;
-        }
-        const data = await res.json();
-        setStudents(data);
-        return;
-      }
-
-      const studentRes = await fetch('/api/students/me', {
+      const res = await fetch('/api/students', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!studentRes.ok) {
-        if (studentRes.status === 401) {
+      if (!res.ok) {
+        if (res.status === 401) {
           localStorage.clear();
           navigate('/login');
         }
         return;
       }
-      const studentData = await studentRes.json();
-      const [marksRes, attendanceRes] = await Promise.all([
-        fetch(`/api/marks/student/${studentData._id}`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`/api/attendance/student/${studentData._id}`, { headers: { Authorization: `Bearer ${token}` } }),
-      ]);
-
-      const marks = marksRes.ok ? await marksRes.json() : [];
-      const attendance = attendanceRes.ok ? await attendanceRes.json() : null;
-      setOwnStudent({ ...studentData, marks, attendance });
-      return;
+      const data = await res.json();
+      if (user?.role === 'mentor') {
+        setStudents(data);
+      } else {
+        setOwnStudent(data[0] || null);
+      }
     } catch (err) {
       setError('Unable to load student data.');
     }
@@ -134,13 +104,10 @@ export default function Dashboard() {
 
   async function handleAddStudent(event) {
     event.preventDefault();
-      console.log('Dashboard fetchStudents start', { user, token });
-      console.log('Decoded token', token ? parseJwt(token) : null);
     setError('');
 
     try {
       const res = await fetch('/api/students', {
-        console.log('Dashboard /api/students response', res);
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -149,7 +116,6 @@ export default function Dashboard() {
         body: JSON.stringify(form),
       });
 
-        console.log('Dashboard /api/students data', data);
       if (res.ok) {
         setForm(createEmptyStudent());
         setModalType('');
@@ -157,7 +123,6 @@ export default function Dashboard() {
       } else {
         const data = await res.json();
         setError(data.message || 'Failed to add student.');
-      console.log('Dashboard /api/students/me response', studentRes);
       }
     } catch (err) {
       setError('Unable to reach the server.');
@@ -166,24 +131,13 @@ export default function Dashboard() {
 
   const openModal = (type, studentId = '') => {
     setError('');
-      console.log('Dashboard /api/students/me data', studentData);
-      const studentId = studentData._id || studentData.id;
-      console.log('Resolved studentId', studentId);
-      if (!studentId) {
-        setError('Student record returned without an ID.');
-        return;
-      }
     setModalType(type);
     setSelectedStudentId(studentId);
     if (type === 'marks') {
       setMarkForm((prev) => ({
-      console.log('Dashboard /api/marks/student response', marksRes);
-      console.log('Dashboard /api/attendance/student response', attendanceRes);
         ...prev,
         studentId: studentId || prev.studentId,
         subject: SUBJECT_KEYS[0].key,
-      console.log('Dashboard marks', marks);
-      console.log('Dashboard attendance', attendance);
         marksObtained: '',
         maxMarks: '',
       }));
@@ -553,7 +507,7 @@ export default function Dashboard() {
 
   const renderStudentDashboard = () => {
     if (!ownStudent) {
-      return <div className="loading-message">No student data available. Please check your login and API responses.</div>;
+      return <div className="loading-message">Loading student dashboard…</div>;
     }
 
     const averageMarks = ownStudent.marks?.length

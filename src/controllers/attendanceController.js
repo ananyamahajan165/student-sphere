@@ -1,16 +1,5 @@
 const Student = require('../models/Student');
 const Attendance = require('../models/Attendance');
-const mongoose = require('mongoose');
-
-async function resolveStudentReference({ studentId, enrollmentNumber }) {
-  if (studentId && mongoose.Types.ObjectId.isValid(studentId)) {
-    return Student.findById(studentId);
-  }
-  if (enrollmentNumber) {
-    return Student.findOne({ enrollmentNumber: String(enrollmentNumber).trim() });
-  }
-  return null;
-}
 
 exports.addAttendance = async (req, res) => {
   try {
@@ -18,17 +7,14 @@ exports.addAttendance = async (req, res) => {
       return res.status(403).json({ message: 'Only mentors can add attendance records' });
     }
 
-    const { studentId, enrollmentNumber, totalClasses, attendedClasses } = req.body;
-    if ((!studentId && !enrollmentNumber) || totalClasses === undefined || attendedClasses === undefined) {
+    const { studentId, totalClasses, attendedClasses } = req.body;
+    if (!studentId || totalClasses === undefined || attendedClasses === undefined) {
       return res.status(400).json({ message: 'studentId, totalClasses, and attendedClasses are required' });
     }
 
-    const student = await resolveStudentReference({ studentId, enrollmentNumber });
+    const student = await Student.findById(studentId);
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
-    }
-    if (student.mentorId && student.mentorId.toString() !== req.user.userId) {
-      return res.status(403).json({ message: 'Access denied' });
     }
 
     const parsedTotal = Number(totalClasses);
@@ -42,8 +28,8 @@ exports.addAttendance = async (req, res) => {
 
     const percentage = Math.round((parsedAttended / parsedTotal) * 100);
     const attendance = await Attendance.findOneAndUpdate(
-      { studentId: student._id },
-      { totalClasses: parsedTotal, attendedClasses: parsedAttended, percentage },
+      { studentId },
+      { totalClasses: parsedTotal, attendedClasses: parsedAttended, percentage, mentorId: req.user.userId },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 
@@ -55,93 +41,19 @@ exports.addAttendance = async (req, res) => {
 
 exports.getAttendance = async (req, res) => {
   try {
-    const studentId = req.query.studentId;
+    const paramId = req.params.studentId || req.query.studentId;
     let query = {};
 
     if (req.user.role === 'student') {
       const student = await Student.findOne({ user: req.user.userId });
       if (!student) return res.status(404).json({ message: 'Student record not found' });
       query.studentId = student._id;
-    } else if (studentId) {
-      query.studentId = studentId;
+    } else if (paramId) {
+      query.studentId = paramId;
     }
 
     const attendance = await Attendance.find(query).lean();
     res.json(attendance);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-exports.getAttendanceByStudent = async (req, res) => {
-  try {
-    const { studentId } = req.params;
-    if (req.user.role === 'student') {
-      const student = await Student.findOne({ user: req.user.userId });
-      if (!student || student._id.toString() !== studentId) {
-        return res.status(403).json({ message: 'Access denied' });
-      }
-    }
-    const student = await Student.findById(studentId);
-    if (!student) return res.status(404).json({ message: 'Student not found' });
-    if (req.user.role === 'mentor' && (!student.mentorId || student.mentorId.toString() !== req.user.userId)) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-    const attendance = await Attendance.findOne({ studentId }).lean();
-    res.json(attendance || null);
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-exports.updateAttendance = async (req, res) => {
-  try {
-    if (req.user.role !== 'mentor') {
-      return res.status(403).json({ message: 'Only mentors can update attendance records' });
-    }
-    const { id } = req.params;
-    const { totalClasses, attendedClasses } = req.body;
-    if (totalClasses === undefined || attendedClasses === undefined) {
-      return res.status(400).json({ message: 'totalClasses and attendedClasses are required' });
-    }
-    const attendance = await Attendance.findById(id);
-    if (!attendance) return res.status(404).json({ message: 'Attendance record not found' });
-    const student = await Student.findById(attendance.studentId);
-    if (!student || !student.mentorId || student.mentorId.toString() !== req.user.userId) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-    const parsedTotal = Number(totalClasses);
-    const parsedAttended = Number(attendedClasses);
-    if (!Number.isFinite(parsedTotal) || parsedTotal <= 0 || !Number.isFinite(parsedAttended) || parsedAttended < 0) {
-      return res.status(400).json({ message: 'Attendance values must be valid numbers' });
-    }
-    if (parsedAttended > parsedTotal) {
-      return res.status(400).json({ message: 'Attended classes cannot exceed total classes' });
-    }
-    attendance.totalClasses = parsedTotal;
-    attendance.attendedClasses = parsedAttended;
-    attendance.percentage = Math.round((parsedAttended / parsedTotal) * 100);
-    await attendance.save();
-    res.json({ message: 'Attendance updated', attendance });
-  } catch (err) {
-    res.status(500).json({ message: 'Server error' });
-  }
-};
-
-exports.deleteAttendance = async (req, res) => {
-  try {
-    if (req.user.role !== 'mentor') {
-      return res.status(403).json({ message: 'Only mentors can delete attendance records' });
-    }
-    const { id } = req.params;
-    const attendance = await Attendance.findById(id);
-    if (!attendance) return res.status(404).json({ message: 'Attendance record not found' });
-    const student = await Student.findById(attendance.studentId);
-    if (!student || !student.mentorId || student.mentorId.toString() !== req.user.userId) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-    await attendance.deleteOne();
-    res.json({ message: 'Attendance record deleted' });
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

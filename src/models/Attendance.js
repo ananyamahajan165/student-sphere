@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const attendanceSchema = new mongoose.Schema(
   {
     studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Student', required: true, unique: true },
+    mentorId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     totalClasses: { type: Number, required: true, min: 0 },
     attendedClasses: { type: Number, required: true, min: 0 },
     percentage: { type: Number, required: true, min: 0, max: 100 },
